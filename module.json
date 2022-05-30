@@ -1,0 +1,26 @@
+{
+    "name": "spell-class-filter-for-5e",
+    "title": "Multiclass spellsheet filter",
+    "description": "Adds options to organize spells by class. Useful for multiclass characters.",
+    "version": "0.0.1",
+    "author": "MrEnigmamgine",
+    "minimumCoreVersion": "0.8.3",
+    "compatibleCoreVersion": "9",
+    "system": "dnd5e",
+    "esmodules": [
+        "./scripts/class-filter.js"
+    ],
+    "styles": [
+
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
+    "url": "https://github.com/MrEnigmamgine/spell-class-filter-for-5e",
+    "manifest": "",
+    "download": ""
+}
