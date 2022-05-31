@@ -1,0 +1,8 @@
+{
+    "SPELLCLASSFILTER" : {
+        "Class" : "Class",
+        "SpellClass": "Spell Class",
+
+        "ClassBarbarian": "Barbarian"
+    }
+}

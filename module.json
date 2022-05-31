@@ -8,10 +8,10 @@
     "compatibleCoreVersion": "9",
     "system": "dnd5e",
     "esmodules": [
-        "./scripts/class-filter.js"
+        "./scf.js"
     ],
     "styles": [
-
+        "./css/class-filter.css"
     ],
     "languages": [
         {
@@ -21,6 +21,6 @@
         }
     ],
     "url": "https://github.com/MrEnigmamgine/spell-class-filter-for-5e",
-    "manifest": "",
-    "download": ""
+    "manifest": "https://github.com/MrEnigmamgine/spell-class-filter-for-5e/releases/latest/download/module.json",
+    "download": "https://github.com/MrEnigmamgine/spell-class-filter-for-5e/releases/download/0.5.24/module.zip"
 }
