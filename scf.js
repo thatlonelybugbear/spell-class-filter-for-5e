@@ -1,28 +1,23 @@
 import { SCF } from "./scripts/config.js";
 /**
- * Project Outline:
+ * MVP Outline:
  *  x Declare class and create methods specific to this module within
  *  x Hook into the dev mode module
  *  x  Inject html into spell item sheets so that user can declare which class it's from
  *  x  Capture that data into a flag on the spell item
  *  x  Add a dropdown filter to the player actor sheet next to the other filters
  *  x  Probably need to capture that as a flag as well
- *    Make the filter actually filter the spell list using the same method as the other filters.
+ *  x  Make the filter actually filter the spell list using the same method as the other filters.
+ */
+/**
+ * Wishlist:
+ *    
  */
 
 
 class spellClassFilter {
   static ID = 'spell-class-filter-for-5e';
   static CONFIG = SCF;
-  // static PATH = 'modules/spell-class-filter-for-5e'
-
-  static FLAGS = {
-    
-  }
-  
-  static TEMPLATES = {
-    TODOLIST: `modules/${this.ID}/templates/todo-list.hbs`
-  }
 
   static log(force, ...args) {  
     const shouldLog = force || game.modules.get('_dev-mode')?.api?.getPackageDebugValue(this.ID);
@@ -40,7 +35,7 @@ Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
 
 Hooks.on("init", function() {
   // "This code runs once the Foundry VTT software begins its initialization workflow."
-  spellClassFilter.log(true, spellClassFilter.CONFIG)
+  spellClassFilter.log(false, spellClassFilter.CONFIG)
 });
 
 // Any time an item sheet is rendered check if it is a spell.  If so add the option to set which class the spell comes from.
@@ -63,6 +58,8 @@ Hooks.on("renderItemSheet5e", async (app, html, data) => {
 
 });
 
+// Any time an actor sheet is rendered check if it is a player character.  If so add the option to set the filter.
+// Then hide elements that do not match the filter.
 Hooks.on("renderActorSheet5e", async (app, html, data) => {
   const actor = app.object;
   const type = actor.data.type;
@@ -75,39 +72,34 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
     const firstItem = filterList.children("li.filter-item:first");
     const itemData = actor.data.items
 
-  const actorClassFilter = await renderTemplate("modules/spell-class-filter-for-5e/templates/actorClassFilter.hbs", {
-    SCF: spellClassFilter.CONFIG,
-    actor,
-    flags: flags,
-    scFlags: actor.data.flags[spellClassFilter.ID]
-  });
+    // Inject a simple dropdown menu.
+    const actorClassFilter = await renderTemplate("modules/spell-class-filter-for-5e/templates/actorClassFilter.hbs", {
+      SCF: spellClassFilter.CONFIG,
+      actor,
+      flags: flags,
+      scFlags: actor.data.flags[spellClassFilter.ID]
+    });
+    firstItem.before(actorClassFilter)
 
-  firstItem.before(actorClassFilter)
-  // spellClassFilter.log(true, actor)
-  // spellClassFilter.log(true, filterList)
-  // spellClassFilter.log(true, firstItem)
-
-  const spellList = spellbook.find(".inventory-list")
-  const items = spellList.find(".item")
-  // spellClassFilter.log(false, "spellList" , spellList)
-  items.each(function(){
-    let itemID = ($(this).data("item-id"))
-    let item = (itemData.get(itemID))
-    let itemFlags = item.data.flags
-    let itemSCFlags = itemFlags[spellClassFilter.ID]
-
-    console.log('actorSCFlags',actorSCFlags)
-    console.log('itemSCFlags', itemSCFlags)
-    
-    if(actorSCFlags.classFilter != ''){
-      if (itemSCFlags){
-        if (!(itemSCFlags.parentClass == actorSCFlags.classFilter)){
+    // Loop through some elements and get thier data
+    const spellList = spellbook.find(".inventory-list")
+    const items = spellList.find(".item")
+    items.each(function(){
+      let itemID = ($(this).data("item-id"))
+      let item = (itemData.get(itemID))
+      let itemFlags = item.data.flags
+      let itemSCFlags = itemFlags[spellClassFilter.ID]
+      
+      // Hide each element that doesn't match. Or don't hide anything if nothing is selected.
+      if(actorSCFlags.classFilter != ''){
+        if (itemSCFlags){
+          if (!(itemSCFlags.parentClass == actorSCFlags.classFilter)){
+            $(this).hide()
+          }
+        }else{
           $(this).hide()
         }
-      }else{
-        $(this).hide()
       }
-    }
   })
 
   }
