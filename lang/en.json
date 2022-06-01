@@ -1,8 +1,23 @@
 {
     "SPELLCLASSFILTER" : {
         "Class" : "Class",
+        "Custom": "Custom",
         "SpellClass": "Spell Class",
+        "Spellbook" : "Spellbook",
 
-        "ClassBarbarian": "Barbarian"
+
+        "ClassArtificer" : "Artificer",
+        "ClassBarbarian" : "Barbarian",
+        "ClassBard"      : "Bard",
+        "ClassCleric"    : "Cleric",
+        "ClassDruid"     : "Druid",  
+        "ClassFighter"   : "Fighter",
+        "ClassMonk"      : "Monk",
+        "ClassPaladin"   : "Paladin",
+        "ClassRanger"    : "Ranger",
+        "ClassRogue"     : "Rogue",
+        "ClassSorcerer"  : "Sorcerer",
+        "ClassWarlock"   : "Warlock",
+        "ClassWizard"    : "Wizard"
     }
 }

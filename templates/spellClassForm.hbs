@@ -1,0 +1,13 @@
+<div class="form-group">
+    <label>{{ localize "SPELLCLASSFILTER.SpellClass" }}</label>
+    <select
+        name="flags.spell-class-filter-for-5e.parentClass"
+    >
+        {{#select flags.spell-class-filter-for-5e.parentClass}}
+            <option value=""> --- </option>
+        {{#each SCF.classes as |name key|}}
+            <option value="{{key}}">{{ localize name}}</option>
+        {{/each}}
+        {{/select}}
+    </select>
+</div>
