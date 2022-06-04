@@ -18,6 +18,15 @@
         "ClassRogue"     : "Rogue",
         "ClassSorcerer"  : "Sorcerer",
         "ClassWarlock"   : "Warlock",
-        "ClassWizard"    : "Wizard"
+        "ClassWizard"    : "Wizard",
+
+        "setting_filterSelect"  : {
+            "name"      : "Enable filter selector on Actor.",
+            "hint"      : "If you don't need this for your character, disabling this option will allow you to reclaim the space and declutter your sheet."
+        },
+        "setting_iconReplace"   : {
+            "name"      : "Cover spell icon with class icon.",
+            "hint"      : "Enabling this will change the spellbook tab to display the icon for the spell's class instead of the spell's image. Useful for managing multiple lists without having to switch between them."
+        }
     }
 }

@@ -11,6 +11,7 @@ import { SCF } from "./scripts/config.js";
  */
 /**
  * Wishlist:
+ *    Option to reduce dropdown menu to only include classes on the actor
  *    
  */
 
@@ -33,9 +34,26 @@ Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
   registerPackageDebugFlag(spellClassFilter.ID);
 });
 
-Hooks.on("init", function() {
+Hooks.once("init", function() {
   // "This code runs once the Foundry VTT software begins its initialization workflow."
   spellClassFilter.log(false, spellClassFilter.CONFIG)
+  game.settings.register(spellClassFilter.ID, "setting_filterSelect", {
+    name: game.i18n.localize("SPELLCLASSFILTER.setting_filterSelect.name"),
+    hint: game.i18n.localize("SPELLCLASSFILTER.setting_filterSelect.hint"),
+    scope: "client",
+    config: true,
+    default: true,
+    type: Boolean
+  });
+  game.settings.register(spellClassFilter.ID, "setting_iconReplace", {
+    name: game.i18n.localize("SPELLCLASSFILTER.setting_iconReplace.name"),
+    hint: game.i18n.localize("SPELLCLASSFILTER.setting_iconReplace.hint"),
+    scope: "client",
+    config: true,
+    default: true,
+    type: Boolean
+  });
+
 });
 
 // Any time an item sheet is rendered check if it is a spell.  If so add the option to set which class the spell comes from.
@@ -62,6 +80,14 @@ Hooks.on("renderItemSheet5e", async (app, html, data) => {
 // Any time an actor sheet is rendered check if it is a player character.  If so add the option to set the filter.
 // Then hide elements that do not match the filter.
 Hooks.on("renderActorSheet5e", async (app, html, data) => {
+
+  // collect relevant settings first
+  const user_setting_filterSelect = game.settings.get(spellClassFilter.ID,'setting_filterSelect')
+  const user_setting_iconReplace = game.settings.get(spellClassFilter.ID,'setting_iconReplace')
+  spellClassFilter.log(false, 'setting_filterSelect:',  user_setting_filterSelect )
+  spellClassFilter.log(false, 'setting_iconReplace:',   user_setting_iconReplace )
+
+  // collect some data to use later
   const actor = app.object;
   const type = actor.data.type;
   const flags = actor.data.flags;
@@ -75,13 +101,17 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
     const actorItems = actor.data.items
 
     // Inject a simple dropdown menu.
-    const actorClassFilter = await renderTemplate("modules/spell-class-filter-for-5e/templates/actorClassFilter.hbs", {
-      SCF: spellClassFilter.CONFIG,
-      actor,
-      flags: flags,
-      scFlags: actor.data.flags[spellClassFilter.ID]
-    });
-    firstItem.before(actorClassFilter)
+    if(user_setting_filterSelect){
+
+      const actorClassFilter = await renderTemplate("modules/spell-class-filter-for-5e/templates/actorClassFilter.hbs", {
+        SCF: spellClassFilter.CONFIG,
+        actor,
+        flags: flags,
+        scFlags: actor.data.flags[spellClassFilter.ID]
+      });
+      firstItem.before(actorClassFilter)
+
+    }
 
     // Get a list of classes for the actor and store their img.
     let classes = {}
@@ -102,25 +132,31 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
       let itemFlags = item.data.flags
       let itemSCFlags = itemFlags[spellClassFilter.ID] //Should return undefined if doesn't exist.
 
-      if(itemSCFlags){
-        if(classes.hasOwnProperty(itemSCFlags.parentClass)){
-          spellClassFilter.log(false, $(this))
-          // $(this).css('background-image', 'url('+classes[itemSCFlags.parentClass]+')')
-          let imgdiv = $(this).find('.item-image')
-          imgdiv.css('background-image', `url(${classes[itemSCFlags.parentClass]})`)
+      if(user_setting_iconReplace){
+        // Replace spell icon image
+        if(itemSCFlags){
+          if(classes.hasOwnProperty(itemSCFlags.parentClass)){
+            spellClassFilter.log(false, $(this))
+            // $(this).css('background-image', 'url('+classes[itemSCFlags.parentClass]+')')
+            let imgdiv = $(this).find('.item-image')
+            imgdiv.css('background-image', `url(${classes[itemSCFlags.parentClass]})`)
+          }
         }
       }
-      
-      // Hide each element that doesn't match. Or don't hide anything if nothing is selected.
-      if(actorSCFlags.classFilter != ''){
-        if (itemSCFlags){
-          if (!(itemSCFlags.parentClass == actorSCFlags.classFilter)){
+
+      if(user_setting_filterSelect){
+        // Hide each element that doesn't match. Or don't hide anything if nothing is selected.
+        if(actorSCFlags.classFilter != ''){
+          if (itemSCFlags){
+            if (!(itemSCFlags.parentClass == actorSCFlags.classFilter)){
+              $(this).hide()
+            }
+          }else{
             $(this).hide()
           }
-        }else{
-          $(this).hide()
         }
       }
+
     })
 
     
