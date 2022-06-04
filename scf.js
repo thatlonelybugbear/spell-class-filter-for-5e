@@ -50,7 +50,7 @@ Hooks.once("init", function() {
     hint: game.i18n.localize("SPELLCLASSFILTER.setting_iconReplace.hint"),
     scope: "client",
     config: true,
-    default: true,
+    default: false,
     type: Boolean
   });
 
