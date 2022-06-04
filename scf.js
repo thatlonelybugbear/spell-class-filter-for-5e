@@ -43,16 +43,17 @@ Hooks.on("renderItemSheet5e", async (app, html, data) => {
 
   const item = app.object;
   const type = item.data.type;
-  const spellDetailsDiv = html.find(".tab.details");
-  const firstChild = spellDetailsDiv.children("h3:first");
-
-  if( type == "spell" ) {
+  
+  // If this is a spell construct the HTML and inject it onto the page.
+  if( type == "spell" ) {  
+    const spellDetailsDiv = html.find(".tab.details");
+    const firstChild = spellDetailsDiv.children("h3:first");
     const spellClassForm = await renderTemplate("modules/spell-class-filter-for-5e/templates/spellClassForm.hbs", {
       SCF: spellClassFilter.CONFIG,
       item,
       flags: item.data.flags
     });
-
+    // Under the first header in the details tab.
     firstChild.after(spellClassForm)
   }
 
@@ -64,13 +65,14 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
   const actor = app.object;
   const type = actor.data.type;
   const flags = actor.data.flags;
-  const actorSCFlags = flags[spellClassFilter.ID]
+  const actorSCFlags = flags[spellClassFilter.ID] 
   
   if (type == "character"){
     const spellbook = html.find(".tab.spellbook")
     const filterList = spellbook.find("ul.filter-list");
     const firstItem = filterList.children("li.filter-item:first");
-    const itemData = actor.data.items
+    // const itemData = actor.data.items
+    const actorItems = actor.data.items
 
     // Inject a simple dropdown menu.
     const actorClassFilter = await renderTemplate("modules/spell-class-filter-for-5e/templates/actorClassFilter.hbs", {
@@ -81,14 +83,33 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
     });
     firstItem.before(actorClassFilter)
 
+    // Get a list of classes for the actor and store their img.
+    let classes = {}
+    for( let item of actorItems) {
+      if (item.type == 'class'){
+        let className = item.data.name.toLowerCase()
+        let classImg = item.data.img
+        classes[className] = classImg
+      }
+    }
+    // spellClassFilter.log(true, classes)
     // Loop through some elements and get thier data
     const spellList = spellbook.find(".inventory-list")
     const items = spellList.find(".item")
     items.each(function(){
       let itemID = ($(this).data("item-id"))
-      let item = (itemData.get(itemID))
+      let item = (actorItems.get(itemID))
       let itemFlags = item.data.flags
-      let itemSCFlags = itemFlags[spellClassFilter.ID]
+      let itemSCFlags = itemFlags[spellClassFilter.ID] //Should return undefined if doesn't exist.
+
+      if(itemSCFlags){
+        if(classes.hasOwnProperty(itemSCFlags.parentClass)){
+          spellClassFilter.log(false, $(this))
+          // $(this).css('background-image', 'url('+classes[itemSCFlags.parentClass]+')')
+          let imgdiv = $(this).find('.item-image')
+          imgdiv.css('background-image', `url(${classes[itemSCFlags.parentClass]})`)
+        }
+      }
       
       // Hide each element that doesn't match. Or don't hide anything if nothing is selected.
       if(actorSCFlags.classFilter != ''){
@@ -100,13 +121,13 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
           $(this).hide()
         }
       }
-  })
+    })
 
-  }
+    
 
+  } //end if character
 
-
-})
+}) //end actorsheet hook
 
 Hooks.on("ready", function() {
   // console.log("This code runs once core initialization is ready and game data is available.");
