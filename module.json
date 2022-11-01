@@ -1,5 +1,5 @@
 {
-    "name": "spell-class-filter-for-5e",
+    "id": "spell-class-filter-for-5e",
     "title": "Multiclass Spellbook Filter",
     "description": "Adds options to organize spells by class. Useful for multiclass characters.",
     "version": "10.0.0",
