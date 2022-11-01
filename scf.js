@@ -60,7 +60,7 @@ Hooks.once("init", function() {
 Hooks.on("renderItemSheet5e", async (app, html, data) => {
 
   const item = app.object;
-  const type = item.data.type;
+  const type = item.type;
   
   // If this is a spell construct the HTML and inject it onto the page.
   if( type == "spell" ) {  
@@ -69,7 +69,7 @@ Hooks.on("renderItemSheet5e", async (app, html, data) => {
     const spellClassForm = await renderTemplate("modules/spell-class-filter-for-5e/templates/spellClassForm.hbs", {
       SCF: spellClassFilter.CONFIG,
       item,
-      flags: item.data.flags
+      flags: item.flags
     });
     // Under the first header in the details tab.
     firstChild.after(spellClassForm)
@@ -89,8 +89,8 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
 
   // collect some data to use later
   const actor = app.object;
-  const type = actor.data.type;
-  const flags = actor.data.flags;
+  const type = actor.type;
+  const flags = actor.flags;
   const actorSCFlags = flags[spellClassFilter.ID] 
   
   if (type == "character"){
@@ -98,7 +98,7 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
     const filterList = spellbook.find("ul.filter-list");
     const firstItem = filterList.children("li.filter-item:first");
     // const itemData = actor.data.items
-    const actorItems = actor.data.items
+    const actorItems = actor.items
 
     // Inject a simple dropdown menu.
     if(user_setting_filterSelect){
@@ -107,7 +107,7 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
         SCF: spellClassFilter.CONFIG,
         actor,
         flags: flags,
-        scFlags: actor.data.flags[spellClassFilter.ID]
+        scFlags: actor.flags[spellClassFilter.ID]
       });
       firstItem.before(actorClassFilter)
 
@@ -117,8 +117,8 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
     let classes = {}
     for( let item of actorItems) {
       if (item.type == 'class'){
-        let className = item.data.name.toLowerCase()
-        let classImg = item.data.img
+        let className = item.name.toLowerCase()
+        let classImg = item.img
         classes[className] = classImg
       }
     }
@@ -129,7 +129,7 @@ Hooks.on("renderActorSheet5e", async (app, html, data) => {
     items.each(function(){
       let itemID = ($(this).data("item-id"))
       let item = (actorItems.get(itemID))
-      let itemFlags = item.data.flags
+      let itemFlags = item.flags
       let itemSCFlags = itemFlags[spellClassFilter.ID] //Should return undefined if doesn't exist.
 
       if(user_setting_iconReplace){
